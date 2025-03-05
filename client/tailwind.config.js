@@ -10,6 +10,7 @@ export default {
         nortonBackground: '#0000a8',
         nortonText: '#57ffff',
         nortonButton: '#00a8a8',
+        nortonInfo: '#ffff55',
       },
       fontFamily: {
         dos: ['Dos', 'monospace'],
