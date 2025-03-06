@@ -1,20 +1,16 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
-interface BreadcrumbsProps {
-  path: string;
-}
-
-const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ path }) => {
-  const parts = path.split('/').filter((part) => part !== '');
-  const breadcrumbs = ['/'].concat(parts);
+const Breadcrumbs: React.FC<{ panel: 'left' | 'right' }> = ({ panel }) => {
+  const currentPath = useSelector((state: RootState) =>
+    panel === 'left' ? state.app.leftCurrentPath : state.app.rightCurrentPath,
+  );
 
   return (
     <div className="mb-4">
-      {breadcrumbs.map((part, index) => (
-        <span key={index}>
-          {part}
-          {index < breadcrumbs.length - 1 && ' / '}
-        </span>
+      {currentPath.split('/').map((folder, index) => (
+        <span key={index}>{folder}</span>
       ))}
     </div>
   );

@@ -21,14 +21,8 @@ import { getFiles, getFileDetails } from './helpers/api';
 function App() {
   const leftCurrentPath = useSelector((state: RootState) => state.app.leftCurrentPath);
   const rightCurrentPath = useSelector((state: RootState) => state.app.rightCurrentPath);
-  const leftFiles = useSelector((state: RootState) => state.app.leftFiles);
-  const rightFiles = useSelector((state: RootState) => state.app.rightFiles);
   const leftSelectedFile = useSelector((state: RootState) => state.app.leftSelectedFile);
   const rightSelectedFile = useSelector((state: RootState) => state.app.rightSelectedFile);
-  const leftSelectedFileInfo = useSelector((state: RootState) => state.app.leftSelectedFileInfo);
-  const rightSelectedFileInfo = useSelector((state: RootState) => state.app.rightSelectedFileInfo);
-  const leftPanelConfig = useSelector((state: RootState) => state.app.leftPanelConfig);
-  const rightPanelConfig = useSelector((state: RootState) => state.app.rightPanelConfig);
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -67,42 +61,14 @@ function App() {
     loadRightFileDetails();
   }, [rightSelectedFile, dispatch]);
 
-  const handleLeftFileClick = async (name: string) => {
-    const newPath = leftCurrentPath + name + '/';
-    dispatch(setLeftCurrentPath(newPath));
-    dispatch(setLeftSelectedFile(name));
-  };
-
-  const handleRightFileClick = async (name: string) => {
-    const newPath = rightCurrentPath + name + '/';
-    dispatch(setRightCurrentPath(newPath));
-    dispatch(setRightSelectedFile(name));
-  };
-
   return (
     <div className="bg-nortonBackground text-nortonText min-h-screen font-dos">
       <div className="container mx-auto p-4 ">
-        <Breadcrumbs path={leftCurrentPath} />
-        <Breadcrumbs path={rightCurrentPath} />
+        <Breadcrumbs panel={'left'} />
+        <Breadcrumbs panel={'right'} />
         <div className="flex min-h-[550px] min-w-full">
-          <Panel
-            config={leftPanelConfig}
-            currentPath={leftCurrentPath}
-            files={leftFiles}
-            selectedFile={leftSelectedFile}
-            setSelectedFile={(name: string | null) => dispatch(setLeftSelectedFile(name))}
-            setCurrentPath={(path: string) => dispatch(setLeftCurrentPath(path))}
-            handleFileClick={handleLeftFileClick}
-          />
-          <Panel
-            config={rightPanelConfig}
-            currentPath={rightCurrentPath}
-            files={rightFiles}
-            selectedFile={rightSelectedFile}
-            setSelectedFile={(name: string | null) => dispatch(setRightSelectedFile(name))}
-            setCurrentPath={(path: string) => dispatch(setRightCurrentPath(path))}
-            handleFileClick={handleRightFileClick}
-          />
+          <Panel panel="left" />
+          <Panel panel="right" />
         </div>
         <div className="flex justify-between">
           <div className="mt-4">
