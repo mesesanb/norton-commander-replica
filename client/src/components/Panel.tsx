@@ -1,10 +1,10 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store/store';
+import { fetchFiles } from '../store/appSlice';
 import FileListContent from './FileListContent';
 import FileTreeContent from './FileTreeContent';
 import FileDetailsContent from './FileDetailsContent';
-import { setLeftCurrentPath, setRightCurrentPath, setLeftSelectedFile, setRightSelectedFile } from '../store/appSlice';
 
 interface PanelProps {
   panel: 'left' | 'right';
@@ -13,63 +13,49 @@ interface PanelProps {
 const Panel: React.FC<PanelProps> = ({ panel }) => {
   const dispatch = useDispatch<AppDispatch>();
 
+  // select panel configuration and current path from the redux store
   const config = useSelector((state: RootState) =>
     panel === 'left' ? state.app.leftPanelConfig : state.app.rightPanelConfig,
   );
   const currentPath = useSelector((state: RootState) =>
     panel === 'left' ? state.app.leftCurrentPath : state.app.rightCurrentPath,
   );
-  const files = useSelector((state: RootState) => (panel === 'left' ? state.app.leftFiles : state.app.rightFiles));
-  const selectedFile = useSelector((state: RootState) =>
-    panel === 'left' ? state.app.leftSelectedFile : state.app.rightSelectedFile,
-  );
 
-  const handleFileClick = async (name: string) => {
-    const newPath = currentPath + name + '/';
-    if (panel === 'left') {
-      dispatch(setLeftCurrentPath(newPath));
-      dispatch(setLeftSelectedFile(name));
-    } else {
-      dispatch(setRightCurrentPath(newPath));
-      dispatch(setRightSelectedFile(name));
+  const isActive = config.active;
+
+  // fetch files when the panel is active and the content is not 'fileTree'
+  useEffect(() => {
+    if (isActive && config.content !== 'fileTree') {
+      dispatch(fetchFiles({ path: currentPath, panel }));
     }
-  };
+    // adding currentPath to the dependency array would cause an infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPath, isActive, panel]);
 
+  // determine which content component to render based on the panel configuration
   let contentComponent;
-
   switch (config.content) {
     case 'fileList':
-      contentComponent = (
-        <FileListContent
-          files={files}
-          onFileClick={handleFileClick}
-          selectedFile={selectedFile}
-          setSelectedFile={(name: string | null) =>
-            panel === 'left' ? dispatch(setLeftSelectedFile(name)) : dispatch(setRightSelectedFile(name))
-          }
-        />
-      );
+      contentComponent = <FileListContent panel={panel} />;
       break;
     case 'fileTree':
-      contentComponent = <FileTreeContent />;
+      contentComponent = <FileTreeContent panel={panel} currentPath={'/'} />;
       break;
     case 'fileDetails':
-      contentComponent = <FileDetailsContent />;
+      contentComponent = <FileDetailsContent panel={panel} />;
       break;
     default:
-      contentComponent = (
-        <FileListContent
-          files={files}
-          onFileClick={handleFileClick}
-          selectedFile={selectedFile}
-          setSelectedFile={(name: string | null) =>
-            panel === 'left' ? dispatch(setLeftSelectedFile(name)) : dispatch(setRightSelectedFile(name))
-          }
-        />
-      );
+      contentComponent = <FileListContent panel={panel} />;
   }
 
-  return <div className="w-1/2 min-h-full bg-gray-900 text-white p-2">{contentComponent}</div>;
+  return (
+    <div
+      className={`${
+        config.content === 'fileTree' ? 'pt-5' : ''
+      } w-1/2 mx-0.5 min-w-[550px] max-w-[550px] h-[550px] border-double border-4 border-nortonText bg-nortonBackground overflow-x-hidden overflow-y-auto`}>
+      {contentComponent}
+    </div>
+  );
 };
 
 export default Panel;

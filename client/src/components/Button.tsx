@@ -11,7 +11,7 @@ const Button: React.FC<ButtonProps> = ({ text, onClick, className }) => {
     <button
       tabIndex={1}
       onClick={onClick}
-      className={`px-4 py-2 text-black focus-visible:bg-nortonText bg-nortonButton hover:bg-nortonText transition duration-300 ${className}`}>
+      className={`px-0 py-0 w-32 text-black focus-visible:bg-nortonText bg-nortonButton hover:bg-nortonText transition duration-300 cursor-none ${className}`}>
       {text}
     </button>
   );
