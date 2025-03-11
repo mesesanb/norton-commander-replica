@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { FileInfo, PanelConfig } from '../types/types';
-import { mockFileSystem } from '../mockData';
+import { fetchFiles as fetchFilesApi, fetchFileDetails as fetchFileDetailsApi } from '../helpers/api';
 
 interface AppState {
   leftCurrentPath: string;
@@ -36,8 +36,16 @@ const initialState: AppState = {
 export const fetchFiles = createAsyncThunk(
   'app/fetchFiles',
   async ({ path, panel }: { path: string; panel: 'left' | 'right' }) => {
-    await new Promise((resolve) => setTimeout(resolve, 10));
-    const data = mockFileSystem[path] || [];
+    const data = await fetchFilesApi(path);
+    return { panel, data };
+  },
+);
+
+// async thunk to fetch file details
+export const fetchFileDetails = createAsyncThunk(
+  'app/fetchFileDetails',
+  async ({ path, panel }: { path: string; panel: 'left' | 'right' }) => {
+    const data = await fetchFileDetailsApi(path);
     return { panel, data };
   },
 );
@@ -95,6 +103,23 @@ const appSlice = createSlice({
       })
       .addCase(fetchFiles.rejected, (_state, action) => {
         console.error('error fetching files:', action.error.message);
+      })
+      .addCase(fetchFileDetails.fulfilled, (state, action) => {
+        const { panel, data } = action.payload;
+
+        if (panel === 'left') {
+          state.leftSelectedFileInfo = data;
+        } else {
+          state.rightSelectedFileInfo = data;
+        }
+        if (state.leftSelectedFile === data.name) {
+          state.leftSelectedFileInfo = data;
+        } else if (state.rightSelectedFile === data.name) {
+          state.rightSelectedFileInfo = data;
+        }
+      })
+      .addCase(fetchFileDetails.rejected, (_state, action) => {
+        console.error('error fetching file details:', action.error.message);
       });
   },
 });
