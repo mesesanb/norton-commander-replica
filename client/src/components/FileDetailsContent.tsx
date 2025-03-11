@@ -16,7 +16,7 @@ const FileDetailsContent: React.FC<FileDetailsContentProps> = ({ panel }) => {
 
   if (!fileInfo) {
     return (
-      <div className="flex justify-center items-center h-full text-nortonInfo">select a file to view details.</div>
+      <div className="flex justify-center items-center h-full text-nortonInfo">Select a file to view details.</div>
     );
   }
 
