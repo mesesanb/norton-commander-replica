@@ -1,6 +1,7 @@
-import React from 'react';
-import { RootState } from '../store/store';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../store/store';
+import { fetchFileDetails } from '../store/appSlice';
 import { extractDateTime, extractFileNameAndExtension, formatSize } from '../helpers/helpers';
 
 interface FileDetailsContentProps {
@@ -8,11 +9,23 @@ interface FileDetailsContentProps {
 }
 
 const FileDetailsContent: React.FC<FileDetailsContentProps> = ({ panel }) => {
-  // select file info from the redux store
+  const dispatch = useDispatch<AppDispatch>();
+
   const fileInfo = useSelector((state: RootState) =>
-    panel === 'left' ? state.app.rightSelectedFileInfo : state.app.leftSelectedFileInfo,
+    panel === 'left' ? state.app.leftSelectedFileInfo : state.app.rightSelectedFileInfo,
+  );
+
+  const filePath = useSelector((state: RootState) =>
+    panel === 'left' ? state.app.leftCurrentPath : state.app.rightCurrentPath,
   );
   const leftPanelConfig = useSelector((state: RootState) => state.app.leftPanelConfig);
+
+  useEffect(() => {
+    if (filePath) {
+      dispatch(fetchFileDetails({ path: filePath, panel }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filePath]);
 
   if (!fileInfo) {
     return (

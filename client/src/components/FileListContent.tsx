@@ -12,6 +12,7 @@ import {
   setLeftPanelConfig,
   setLeftSelectedFileInfo,
   setRightSelectedFileInfo,
+  fetchFileDetails,
 } from '../store/appSlice';
 
 interface FileListProps {
@@ -31,7 +32,6 @@ const FileListContent: React.FC<FileListProps> = ({ panel }) => {
   const panelFiles = useSelector((state: RootState) =>
     panel === 'left' ? state.app.leftPanelData : state.app.rightPanelData,
   );
-
   const rightPanelConfig = useSelector((state: RootState) => state.app.rightPanelConfig);
   const leftPanelConfig = useSelector((state: RootState) => state.app.leftPanelConfig);
 
@@ -56,7 +56,6 @@ const FileListContent: React.FC<FileListProps> = ({ panel }) => {
   const handleFileClick = (file: FileInfo, index: number) => {
     setSelectedIndex(index);
     const newPath = isRoot ? `${currentPath}${file.name}` : `${currentPath}/${file.name}`;
-
     if (file.type === 'directory') {
       if (panel === 'left') {
         dispatch(setLeftCurrentPath(newPath));
@@ -73,16 +72,17 @@ const FileListContent: React.FC<FileListProps> = ({ panel }) => {
       }
     } else {
       if (panel === 'left') {
-        dispatch(setLeftSelectedFile(file.name));
+        dispatch(setLeftSelectedFile(newPath));
         dispatch(setLeftSelectedFileInfo(file));
         dispatch(setLeftPanelConfig({ ...leftPanelConfig, active: true }));
         dispatch(setRightPanelConfig({ ...rightPanelConfig, active: false }));
       } else {
-        dispatch(setRightSelectedFile(file.name));
+        dispatch(setRightSelectedFile(newPath));
         dispatch(setRightSelectedFileInfo(file));
         dispatch(setLeftPanelConfig({ ...leftPanelConfig, active: false }));
         dispatch(setRightPanelConfig({ ...rightPanelConfig, active: true }));
       }
+      dispatch(fetchFileDetails({ path: newPath, panel }));
     }
   };
 
@@ -198,49 +198,58 @@ const FileListContent: React.FC<FileListProps> = ({ panel }) => {
         )}
 
         {/* render file list */}
-        {panelFiles.map((file: FileInfo, index) => {
-          const [fileName, fileExtension] = extractFileNameAndExtension(file.name);
+        <div className="h-[410px] overflow-y-auto">
+          {' '}
+          {panelFiles.map((file: FileInfo, index) => {
+            const [fileName, fileExtension] = extractFileNameAndExtension(file.name);
 
-          return (
-            <div
-              key={file.name + file.creationDate}
-              className={`grid grid-cols-[1.5fr_1fr_1fr_1fr] ${
-                selectedIndex === (isRoot ? index : index + 1)
-                  ? 'bg-nortonText text-nortonBackground'
-                  : 'hover:bg-nortonText hover:text-nortonBackground'
-              }`}
-              onClick={() => handleFileClick(file, isRoot ? index : index + 1)}
-              tabIndex={0}>
-              <div className="flex items-center justify-between">
-                <span className="overflow-hidden text-ellipsis whitespace-nowrap pl-0.5">{fileName}</span>
-                <span className="text-right">{fileExtension}</span>
+            return (
+              <div
+                key={file.name + file.creationDate}
+                className={`grid grid-cols-[1.5fr_1fr_1fr_1fr] ${
+                  selectedIndex === (isRoot ? index : index + 1)
+                    ? 'bg-nortonText text-nortonBackground'
+                    : 'hover:bg-nortonText hover:text-nortonBackground'
+                }`}
+                onClick={() => handleFileClick(file, isRoot ? index : index + 1)}
+                tabIndex={0}>
+                <div className="flex items-center justify-between">
+                  <span className="overflow-hidden text-ellipsis whitespace-nowrap pl-0.5">{fileName}</span>
+                  <span className="text-right">{fileExtension}</span>
+                </div>
+                <div className="flex items-center justify-center h-full">
+                  {file.type === 'directory' ? `►SUB-DIR◄` : formatSize(file.size ?? 0, 'list')}
+                </div>
+                <div className="flex items-center justify-center h-full">
+                  {extractDateTime(file.lastModifiedDate).date}
+                </div>
+                <div className="flex items-center justify-center h-full">
+                  {extractDateTime(file.lastModifiedDate).time}
+                </div>
               </div>
-              <div className="flex items-center justify-center h-full">
-                {file.type === 'directory' ? `►SUB-DIR◄` : formatSize(file.size ?? 0, 'list')}
-              </div>
-              <div className="flex items-center justify-center h-full">
-                {extractDateTime(file.lastModifiedDate).date}
-              </div>
-              <div className="flex items-center justify-center h-full">
-                {extractDateTime(file.lastModifiedDate).time}
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}{' '}
+        </div>
 
         {/* render vertical lines */}
-        <div className="absolute inset-y-0 left-[calc(100%-350px)] w-[2px] h-[calc(100%-60px)] bg-nortonText"></div>
-        <div className="absolute inset-y-0 left-[calc(100%-250px)] w-[2px] h-[calc(100%-60px)] bg-nortonText"></div>
-        <div className="absolute inset-y-0 left-[calc(100%-120px)] w-[2px] h-[calc(100%-60px)] bg-nortonText"></div>
+        {panelFiles.length !== 0 && (
+          <div className="absolute inset-y-0 left-[calc(100%-350px)] w-[2px] h-[calc(100%-60px)] bg-nortonText"></div>
+        )}
+        {panelFiles.length !== 0 && (
+          <div className="absolute inset-y-0 left-[calc(100%-250px)] w-[2px] h-[calc(100%-60px)] bg-nortonText"></div>
+        )}
+        {panelFiles.length !== 0 && (
+          <div className="absolute inset-y-0 left-[calc(100%-120px)] w-[2px] h-[calc(100%-60px)] bg-nortonText"></div>
+        )}
 
         {/* render bottom info for file */}
         <div className="absolute bottom-0 left-0 w-full h-[60px] border-t-2 border-nortonText p-2 flex items-center">
           {selectedIndex === 0 && !isRoot ? (
             <div className="text-nortonInfo flex-grow flex items-center justify-between">
               <span className="w-[185px] whitespace-nowrap">..</span>
-              <span className="ml-1 w-[85px] text-center">►UP--DIR◄</span>
-              <span>{extractDateTime(panelFiles[0].lastModifiedDate).date}</span>
-              <span>{extractDateTime(panelFiles[0].lastModifiedDate).time}</span>
+              <span className="-ml-2 w-[85px] text-center">►UP--DIR◄</span>
+              <span>{extractDateTime(panelFiles[0]?.lastModifiedDate).date || '01/01/2025'}</span>
+              <span>{extractDateTime(panelFiles[0]?.lastModifiedDate).time || '00:00 AM'}</span>
             </div>
           ) : selectedFile && panelFiles ? (
             <div className="text-nortonInfo flex items-center justify-between">
