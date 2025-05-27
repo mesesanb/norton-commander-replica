@@ -1,9 +1,7 @@
 
-# qubiz-commander
+# norton-commander replica
 
-React-based file explorer application inspired by Norton Commander, developed as a technical assignment for Qubiz.
-I chose the NC look because it was the first file explorer software that I used.
-
+React-based file explorer application inspired by Norton Commander to practice nodejs redux and react
 ## Features
 
 - Browse files and directories
