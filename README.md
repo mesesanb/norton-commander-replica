@@ -42,10 +42,9 @@ React-based file explorer application inspired by Norton Commander to practice n
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/qubiz-commander.git
-   cd qubiz-commander
+   git clone https://github.com/mesesanb/norton-commander-replica.git
+   cd norton-commander-replica
    ```
-````
 
 2. Navigate to the backend directory:
 
@@ -84,7 +83,7 @@ React-based file explorer application inspired by Norton Commander to practice n
 3. Start the frontend development server:
 
    ```bash
-   npm start
+   npm run dev
    ```
 
    The frontend development server will start on `http://localhost:3000`.
