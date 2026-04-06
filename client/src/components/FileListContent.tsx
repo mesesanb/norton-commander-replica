@@ -55,16 +55,15 @@ const FileListContent: React.FC<FileListProps> = ({ panel }) => {
   // handle file click
   const handleFileClick = (file: FileInfo, index: number) => {
     setSelectedIndex(index);
-    const newPath = isRoot ? `${currentPath}${file.name}` : `${currentPath}/${file.name}`;
     if (file.type === 'directory') {
       if (panel === 'left') {
-        dispatch(setLeftCurrentPath(newPath));
+        dispatch(setLeftCurrentPath(file.fullPath));
         dispatch(setLeftSelectedFile(file.name));
         dispatch(setLeftSelectedFileInfo(file));
         dispatch(setLeftPanelConfig({ ...leftPanelConfig, active: true }));
         dispatch(setRightPanelConfig({ ...rightPanelConfig, active: false }));
       } else {
-        dispatch(setRightCurrentPath(newPath));
+        dispatch(setRightCurrentPath(file.fullPath));
         dispatch(setRightSelectedFile(file.name));
         dispatch(setRightSelectedFileInfo(file));
         dispatch(setLeftPanelConfig({ ...leftPanelConfig, active: false }));
@@ -72,17 +71,17 @@ const FileListContent: React.FC<FileListProps> = ({ panel }) => {
       }
     } else {
       if (panel === 'left') {
-        dispatch(setLeftSelectedFile(newPath));
+        dispatch(setLeftSelectedFile(file.fullPath));
         dispatch(setLeftSelectedFileInfo(file));
         dispatch(setLeftPanelConfig({ ...leftPanelConfig, active: true }));
         dispatch(setRightPanelConfig({ ...rightPanelConfig, active: false }));
       } else {
-        dispatch(setRightSelectedFile(newPath));
+        dispatch(setRightSelectedFile(file.fullPath));
         dispatch(setRightSelectedFileInfo(file));
         dispatch(setLeftPanelConfig({ ...leftPanelConfig, active: false }));
         dispatch(setRightPanelConfig({ ...rightPanelConfig, active: true }));
       }
-      dispatch(fetchFileDetails({ path: newPath, panel }));
+      dispatch(fetchFileDetails({ path: file.fullPath, panel }));
     }
   };
 

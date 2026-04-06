@@ -23,12 +23,14 @@ const initialState: RootState = {
         size: 1234,
         creationDate: '2025-03-05T08:02:19.978Z',
         lastModifiedDate: '2025-03-09T20:32:13.173Z',
+        fullPath: '/file1.txt',
       },
       {
         name: 'directory1',
         type: 'directory',
         creationDate: '2025-03-05T08:02:19.978Z',
         lastModifiedDate: '2025-03-09T20:32:13.173Z',
+        fullPath: '/directory1',
       },
     ],
     rightPanelData: [],
@@ -68,7 +70,7 @@ describe('FileListContent', () => {
 
     expect(store.getActions()).toContainEqual({
       type: 'app/setLeftSelectedFile',
-      payload: 'file1.txt',
+      payload: '/file1.txt',
     });
   });
 

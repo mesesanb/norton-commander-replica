@@ -72,8 +72,11 @@ export const listFiles = async (req: Request, res: Response): Promise<void> => {
       }),
     );
     res.json(fileInfos);
-  } catch (error: unknown) {
-    const code = (error as NodeJS.ErrnoException).code;
+  } catch (error) {
+    const code =
+      typeof error === 'object' && error !== null && 'code' in error
+        ? (error as { code?: string }).code
+        : undefined;
     if (code === 'ENOENT' || code === 'ENOTDIR') {
       res.status(404).json({ error: 'Directory not found' });
       return;
@@ -102,8 +105,11 @@ export const getFileDetails = async (req: Request, res: Response): Promise<void>
       fullPath: toClientPath(safePath),
     };
     res.json(fileDetails);
-  } catch (error: unknown) {
-    const code = (error as NodeJS.ErrnoException).code;
+  } catch (error) {
+    const code =
+      typeof error === 'object' && error !== null && 'code' in error
+        ? (error as { code?: string }).code
+        : undefined;
     if (code === 'ENOENT') {
       res.status(404).json({ error: 'File or directory not found' });
       return;
