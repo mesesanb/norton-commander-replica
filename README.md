@@ -34,10 +34,10 @@ React-based file explorer application inspired by Norton Commander to practice n
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
-- npm (v6 or higher)
+- [Node.js](https://nodejs.org/en/download) (v14 or higher)
+- [npm](https://www.npmjs.com/get-npm) (v6 or higher)
 
-### Backend Setup
+### Setup
 
 1. Clone the repository:
 
@@ -46,47 +46,22 @@ React-based file explorer application inspired by Norton Commander to practice n
    cd norton-commander-replica
    ```
 
-2. Navigate to the backend directory:
-
-   ```bash
-   cd node-ts-rest-api
-   ```
-
-3. Install the dependencies:
+2. Install all dependencies (root + backend + frontend):
 
    ```bash
    npm install
+   npm install --prefix node-ts-rest-api
+   npm install --prefix client
    ```
 
-4. Start the backend server:
-
-   ```bash
-   npm start
-   ```
-
-   The backend server will start on `http://localhost:3001`.
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-
-   ```bash
-   cd ../client
-   ```
-
-2. Install the dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Start the frontend development server:
+3. Start both backend and frontend with a single command:
 
    ```bash
    npm run dev
    ```
 
-   The frontend development server will start on `http://localhost:3000`.
+   - Backend starts on `http://localhost:3001`
+   - Frontend starts on `http://localhost:3000`
 
 ## Usage
 
@@ -96,10 +71,8 @@ React-based file explorer application inspired by Norton Commander to practice n
 
 ## Running Tests
 
-To run the unit tests for the frontend components, use the following command:
+To run the unit tests for the frontend components:
 
 ```bash
-npm test
+npm test --prefix client
 ```
-
-This will run the tests and display the results in the terminal.

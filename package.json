@@ -1,0 +1,11 @@
+{
+  "name": "norton-commander-replica",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently --names \"backend,frontend\" --prefix-colors \"cyan,magenta\" \"npm --prefix node-ts-rest-api start\" \"npm --prefix client run dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
