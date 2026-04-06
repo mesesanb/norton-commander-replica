@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "postinstall": "npm install --prefix node-ts-rest-api && npm install --prefix client",
     "dev": "concurrently --names \"backend,frontend\" --prefix-colors \"cyan,magenta\" \"npm --prefix node-ts-rest-api start\" \"npm --prefix client run dev\""
   },
   "devDependencies": {
