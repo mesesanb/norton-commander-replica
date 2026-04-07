@@ -8,7 +8,7 @@ React-based file explorer application inspired by Norton Commander to practice n
 - Dual-panel interface
 - Fetch file details from the backend
 - Keyboard navigation
-- The tree view is using only mocked data - so far
+- Tree view powered by backend filesystem data
 
 ## Challenges Faced and How They Were Solved
 
@@ -22,7 +22,7 @@ React-based file explorer application inspired by Norton Commander to practice n
 
 **Problem:** Implementing keyboard navigation to allow users to navigate through files and directories using the keyboard was challenging.
 
-**Solution:** Added event listeners for keyboard events and implemented logic to handle arrow keys and the Enter key to navigate and select files and directories. And the fact that I used mocked data was a little bit of a drawback, but lesson learned.
+**Solution:** Added event listeners for keyboard events and implemented logic to handle arrow keys and the Enter key to navigate and select files and directories.
 
 ### Challenge 3: TypeScript Configuration
 
